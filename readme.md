@@ -17,10 +17,10 @@ This project demonstrates a vessel trail application using React and OpenLayers,
 
 -   #### Vessel Positions
 
-    Individual positions along the vessel's route are represented by markers. Each marker represents a data point in the vessel's journey, complete with information such as timestamp, speed, and direction. These markers are interactive, allowing users to hover or click for additional functionalities (see "Hover and Click Technology").
+    Individual positions along the vessel's route are represented by markers. Each marker represents a data point in the vessel's journey, complete with information such as timestamp, speed, and direction. The markers are oriented to point in the direction of the vessel’s travel. These markers are interactive, allowing users to hover or click for additional functionalities (see "Hover and Click Technology").
 
 -   #### Vessel Marker
-    The Vessel Marker displays the vessel’s current position, which can be moved along the path by clicking on different position markers. When clicked, the vessel marker updates to the selected location, reflecting the new timestamp and allowing for an interactive exploration of the vessel’s historical positions.
+    The Vessel Marker displays the vessel’s current position, which can be moved along the path by clicking on different position markers. The vessel icon is also rotated according to the current direction, offering a realistic view of the vessel's orientation. When clicked, the vessel marker updates to the selected location, reflecting the new timestamp and allowing for an interactive exploration of the vessel’s historical positions.
 
 ## Interactivity
 
