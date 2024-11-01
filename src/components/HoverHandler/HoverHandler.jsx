@@ -1,7 +1,7 @@
 import MarkerTooltip from "../MarkerTooltip/MarkerTooltip";
-import { getInitialTooltipData } from "../../utils/TooltipUtils";
-import { useTooltip } from "../../hooks/useTooltip.jsx";
-import { useFeatureHover } from "../../hooks/useFeatureHover.jsx";
+import { getInitialTooltipData } from "../../utils/tooltipUtils";
+import { useTooltip } from "../../hooks/useTooltip";
+import { useFeatureHover } from "../../hooks/useFeatureHover";
 
 const HoverHandler = ({ map, vectorSource }) => {
     const { tooltipData, updateTooltipData, resetTooltipData } = useTooltip(
