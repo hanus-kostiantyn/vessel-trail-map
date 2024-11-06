@@ -13,9 +13,8 @@ import "./MapWrapper.styles.css";
 const MapWrapper = () => {
     const [vectorSource, setVectorSource] = useState(new VectorSource());
     const map = useInitializeMap(vectorSource);
-    const initialSingleVesselMovementData = vesselMovementData[0];
-
-    // State for toggling visibility
+    const initialSingleVesselMovementData =
+        vesselMovementData.vessels[0].trail[0];
     const { layersVisibility, setLayersVisibility, toggleLayersVisibility } =
         useVisibilityToggle();
 
@@ -35,7 +34,9 @@ const MapWrapper = () => {
                     <>
                         <LayersWrapper
                             layersVisibility={layersVisibility}
-                            vesselMovementData={vesselMovementData}
+                            vesselMovementData={
+                                vesselMovementData.vessels[0].trail
+                            }
                             vectorSource={vectorSource}
                             map={map}
                             singleVesselMovementData={singleVesselMovementData}
