@@ -8,13 +8,26 @@ import {
 } from "../../utils/featureUtils";
 import VesselIcon from "../../assets/VesselIcon.svg";
 
-const VesselMarker = ({ singleVesselMovementData, vectorSource, map }) => {
+const VesselMarker = ({
+    singleVesselMovementData,
+    vessel,
+    vectorSource,
+    map,
+}) => {
     useEffect(() => {
         const { lat, lon, direction } = singleVesselMovementData;
+        const { name, type, IMO } = vessel;
         const degrees = directionToDegrees(direction);
 
         // Create the feature using the utility function
-        const vesselFeature = createPointFeature(lat, lon);
+        const vesselFeature = createPointFeature(lat, lon, {
+            vesselInfo: {
+                name,
+                type,
+                IMO,
+                ...singleVesselMovementData,
+            },
+        });
 
         const iconStyle = new Style({
             image: new Icon({
@@ -40,7 +53,7 @@ const VesselMarker = ({ singleVesselMovementData, vectorSource, map }) => {
             vectorSource.removeFeature(vesselFeature);
             cleanupZoomListener();
         };
-    }, [singleVesselMovementData, vectorSource, map]);
+    }, [singleVesselMovementData, vessel, vectorSource, map]);
 
     return null;
 };

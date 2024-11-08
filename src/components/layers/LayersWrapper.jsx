@@ -1,13 +1,14 @@
 import PositionPath from "./PositionPath";
 import PositionMarkers from "./PositionMarkers";
 import VesselMarker from "./VesselMarker";
+import SpeedHeatmapLayer from "./SpeedHeatmapLayer";
 
 const LayersWrapper = ({
     layersVisibility,
+    vessel,
     vesselMovementData,
     vectorSource,
     map,
-    singleVesselMovementData,
 }) => {
     const renderPositionPath = () =>
         layersVisibility.path && (
@@ -20,10 +21,11 @@ const LayersWrapper = ({
 
     const renderPositionMarkers = () =>
         layersVisibility.markers &&
-        vesselMovementData.map((position, index) => (
+        vesselMovementData.map((singleVesselMovementData, index) => (
             <PositionMarkers
                 key={index}
-                singleVesselMovementData={position}
+                singleVesselMovementData={singleVesselMovementData}
+                vessel={vessel}
                 vectorSource={vectorSource}
                 map={map}
             />
@@ -32,16 +34,29 @@ const LayersWrapper = ({
     const renderVesselMarker = () =>
         layersVisibility.vessel && (
             <VesselMarker
-                singleVesselMovementData={singleVesselMovementData}
+                singleVesselMovementData={
+                    vesselMovementData[vesselMovementData.length - 1]
+                }
+                vessel={vessel}
                 vectorSource={vectorSource}
                 map={map}
             />
         );
+
+    const renderSpeedHeatmapLayer = () =>
+        layersVisibility.heatmap && (
+            <SpeedHeatmapLayer
+                vesselMovementData={vesselMovementData}
+                map={map}
+            />
+        );
+
     return (
         <>
             {renderPositionPath()}
             {renderPositionMarkers()}
             {renderVesselMarker()}
+            {renderSpeedHeatmapLayer()}
         </>
     );
 };

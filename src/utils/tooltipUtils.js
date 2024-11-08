@@ -4,4 +4,7 @@ export const getInitialTooltipData = () => ({
     timestamp: "",
     speed: 0,
     direction: "",
+    temperature: 0,
+    windSpeed: 0,
+    waveHeight: 0,
 });

@@ -5,6 +5,7 @@ export const useVisibilityToggle = (initialVisibility = true) => {
         markers: initialVisibility,
         path: initialVisibility,
         vessel: initialVisibility,
+        heatmap: false,
     });
 
     const toggleLayersVisibility = (layer) => {

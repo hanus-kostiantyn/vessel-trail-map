@@ -4,53 +4,100 @@ import { vesselMovementData } from "../../data/vesselMovementData";
 import HoverHandler from "../HoverHandler/HoverHandler";
 import ToggleControls from "../ToggleControls/ToggleControls";
 import LayersWrapper from "../layers/LayersWrapper";
+import VesselDetailsPanel from "../VesselDetailsPanel/VesselDetailsPanel";
+import GeofenceAlert from "../GeofenceAlert/GeofenceAlert";
 import { useInitializeMap } from "../../hooks/useInitializeMap";
 import { useVisibilityToggle } from "../../hooks/useVisibilityToggle";
 import { useHandleMapInteraction } from "../../hooks/useHandleMapInteraction";
+import { useVesselTrailSimulation } from "../../hooks/useVesselTrailSimulation";
+import { useGeofencingAlert } from "../../hooks/useGeofencingAlert";
+import { useAlert } from "../../hooks/useAlert";
+import { useVesselDetailsUpdater } from "../../hooks/useVesselDetailsUpdater";
+
+import { Box } from "@mui/material";
 import "ol/ol.css";
-import "./MapWrapper.styles.css";
+import styles from "./MapWrapper.styles";
 
 const MapWrapper = () => {
     const [vectorSource, setVectorSource] = useState(new VectorSource());
     const map = useInitializeMap(vectorSource);
-    const initialSingleVesselMovementData =
-        vesselMovementData.vessels[0].trail[0];
-    const { layersVisibility, setLayersVisibility, toggleLayersVisibility } =
-        useVisibilityToggle();
 
-    // Use the custom hook for map interaction
-    const { singleVesselMovementData, currentTimestamp } =
-        useHandleMapInteraction(
-            map,
-            initialSingleVesselMovementData,
-            initialSingleVesselMovementData.timestamp,
-            setLayersVisibility
-        );
+    const [selectedVesselIndex, setSelectedVesselIndex] = useState(0);
+    const [clickedVesselData, setClickedVesselData] = useState(null);
+    const [showDetailsPanel, setShowDetailsPanel] = useState(false);
+
+    const { layersVisibility, toggleLayersVisibility } = useVisibilityToggle();
+
+    const { currentVessel, simulatedTrail } = useVesselTrailSimulation(
+        vesselMovementData,
+        selectedVesselIndex
+    );
+
+    useHandleMapInteraction(
+        map,
+        showDetailsPanel,
+        setShowDetailsPanel,
+        setClickedVesselData
+    );
+
+    // Custom hook to dynamically update the vessel details panel when the details panel is open and timer is going on
+    useVesselDetailsUpdater(
+        currentVessel,
+        simulatedTrail,
+        setClickedVesselData,
+        showDetailsPanel
+    );
+
+    const { alertMessage, alertOpen, showAlert, closeAlert } = useAlert();
+
+    // Apply geofencing alert hook to monitor for zone entry
+    useGeofencingAlert(simulatedTrail, (message) => showAlert(message));
+
+    const handleSelectVessel = (index) => {
+        setSelectedVesselIndex(index);
+        setShowDetailsPanel(false);
+    };
 
     return (
-        <div>
-            <div id="map">
+        <Box sx={styles.wrapper}>
+            <Box id="map" sx={styles.mapContainer}>
                 {map && (
                     <>
                         <LayersWrapper
                             layersVisibility={layersVisibility}
-                            vesselMovementData={
-                                vesselMovementData.vessels[0].trail
-                            }
+                            vessel={currentVessel}
+                            vesselMovementData={simulatedTrail}
                             vectorSource={vectorSource}
                             map={map}
-                            singleVesselMovementData={singleVesselMovementData}
                         />
                         <HoverHandler map={map} vectorSource={vectorSource} />
                         <ToggleControls
                             layersVisibility={layersVisibility}
                             toggleLayersVisibility={toggleLayersVisibility}
-                            currentTimestamp={currentTimestamp}
+                            currentTimestamp={
+                                simulatedTrail[simulatedTrail.length - 1]
+                                    ?.timestamp || ""
+                            }
+                            vessels={vesselMovementData.vessels}
+                            selectedVesselIndex={selectedVesselIndex}
+                            onSelectVessel={handleSelectVessel}
                         />
                     </>
                 )}
-            </div>
-        </div>
+                {showDetailsPanel && (
+                    <VesselDetailsPanel
+                        vessel={clickedVesselData}
+                        onClose={() => setShowDetailsPanel(false)}
+                    />
+                )}
+                <GeofenceAlert
+                    open={alertOpen}
+                    message={alertMessage}
+                    onClose={closeAlert}
+                />
+                <Box id="zoom-controls" sx={styles.customZoom}></Box>
+            </Box>
+        </Box>
     );
 };
 
