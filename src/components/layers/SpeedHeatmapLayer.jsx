@@ -1,43 +1,50 @@
 import { useEffect } from "react";
-import VectorSource from "ol/source/Vector";
-import { Heatmap as HeatmapLayer } from "ol/layer";
-import { fromLonLat } from "ol/proj";
-import Feature from "ol/Feature";
-import Point from "ol/geom/Point";
+import {
+    createPointFeature,
+    updateFeatureScaleOnZoom,
+} from "../../utils/featureUtils";
+import { applyScaleToHeatmapLayer } from "../../utils/zoomUtils";
 import { weightForSpeed } from "../../utils/weightForSpeedUtils";
 
-const SpeedHeatmapLayer = ({ vesselMovementData, map }) => {
+const SpeedHeatmapLayer = ({
+    vesselMovementData,
+    heatmapSource,
+    heatmapLayer,
+    map,
+}) => {
     useEffect(() => {
-        if (!map) return;
-
         // Create features from vessel movement data
-        const heatmapFeatures = vesselMovementData.map((point) => {
-            const coord = fromLonLat([point.lon, point.lat]);
-            const feature = new Feature({
-                geometry: new Point(coord),
-                speed: point.speed,
-            });
+        const heatmapFeatures = vesselMovementData.map(
+            (singleVesselMovementData) => {
+                const { lat, lon, speed } = singleVesselMovementData;
+                const heatmapSingleFeature = createPointFeature(
+                    lat,
+                    lon,
+                    speed
+                );
 
-            // Set weight based on speed
-            feature.set("weight", weightForSpeed(point.speed));
-            return feature;
-        });
+                // Set weight based on speed
+                heatmapSingleFeature.set("weight", weightForSpeed(speed));
+                return heatmapSingleFeature;
+            }
+        );
 
-        // Create a Heatmap layer
-        const heatmapLayer = new HeatmapLayer({
-            source: new VectorSource({
-                features: heatmapFeatures,
-            }),
-            blur: 15, // Adjust the blur for heatmap effect
-            radius: 8, // Adjust the radius of each point
-        });
+        // Add all heatmap features to the dedicated vector source
+        heatmapSource.addFeatures(heatmapFeatures);
 
-        map.addLayer(heatmapLayer);
+        // Update the heatmap layer scaling based on zoom
+        applyScaleToHeatmapLayer(heatmapLayer, map.getView().getZoom());
+
+        // Add listener for zoom changes
+        const cleanupZoomListener = updateFeatureScaleOnZoom(map, heatmapLayer);
 
         return () => {
-            map.removeLayer(heatmapLayer);
+            heatmapFeatures.forEach((feature) =>
+                heatmapSource.removeFeature(feature)
+            );
+            cleanupZoomListener();
         };
-    }, [vesselMovementData, map]);
+    }, [vesselMovementData, heatmapSource]);
 
     return null;
 };

@@ -17,6 +17,25 @@ export const getScaleForZoom = (zoomLevel, type) => {
     }
 };
 
+export const getHeatmapScaleForZoom = (zoomLevel) => {
+    switch (true) {
+        case zoomLevel >= 14:
+            return { blur: 11, radius: 16 };
+        case zoomLevel >= 12:
+            return { blur: 8, radius: 12 };
+        case zoomLevel >= 10:
+            return { blur: 6, radius: 9 };
+        case zoomLevel >= 8:
+            return { blur: 5, radius: 7 };
+        case zoomLevel >= 6:
+            return { blur: 4, radius: 5 };
+        case zoomLevel >= 4:
+            return { blur: 3, radius: 4 };
+        default:
+            return { blur: 2, radius: 2 };
+    }
+};
+
 export const applyScaleToFeature = (feature, zoomLevel, style, type) => {
     const scale = getScaleForZoom(zoomLevel, type); // Get scale based on zoom level
 
@@ -30,4 +49,10 @@ export const applyScaleToFeature = (feature, zoomLevel, style, type) => {
         style.getStroke().setWidth(scale); // Apply scale to stroke width (for paths)
     }
     feature.setStyle(style); // Update the feature with the new style
+};
+
+export const applyScaleToHeatmapLayer = (layer, zoomLevel) => {
+    const { blur, radius } = getHeatmapScaleForZoom(zoomLevel);
+    layer.setBlur(blur);
+    layer.setRadius(radius);
 };

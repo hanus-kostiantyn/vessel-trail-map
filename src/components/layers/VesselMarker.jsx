@@ -36,6 +36,7 @@ const VesselMarker = ({
                 scale: getScaleForZoom(map.getView().getZoom(), "marker"),
                 anchor: [0.5, 0.8],
             }),
+            zIndex: 15,
         });
 
         vesselFeature.setStyle(iconStyle);

@@ -8,6 +8,8 @@ const LayersWrapper = ({
     vessel,
     vesselMovementData,
     vectorSource,
+    heatmapSource,
+    heatmapLayer,
     map,
 }) => {
     const renderPositionPath = () =>
@@ -47,6 +49,8 @@ const LayersWrapper = ({
         layersVisibility.heatmap && (
             <SpeedHeatmapLayer
                 vesselMovementData={vesselMovementData}
+                heatmapSource={heatmapSource}
+                heatmapLayer={heatmapLayer}
                 map={map}
             />
         );

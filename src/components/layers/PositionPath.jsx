@@ -21,6 +21,7 @@ const PositionPath = ({ vesselMovementData, vectorSource, map }) => {
                 color: "rgba(0, 0, 255, 0.3)",
                 width: getScaleForZoom(map.getView().getZoom(), "path"),
             }),
+            zIndex: 5,
         });
 
         pathFeature.setStyle(pathStyle);

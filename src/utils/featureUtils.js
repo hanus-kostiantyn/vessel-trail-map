@@ -1,7 +1,7 @@
 import { Feature } from "ol";
 import { Point, LineString } from "ol/geom";
 import { fromLonLat } from "ol/proj";
-import { applyScaleToFeature } from "./zoomUtils";
+import { applyScaleToFeature, applyScaleToHeatmapLayer } from "./zoomUtils";
 
 // Create a point feature with lat/lon data and additional info
 export const createPointFeature = (lat, lon, additionalInfo = {}) => {
@@ -30,8 +30,12 @@ export const createLinestringFeature = (
 export const updateFeatureScaleOnZoom = (map, feature, styleType) => {
     const updateScaleOnZoom = () => {
         const zoom = map.getView().getZoom();
-        const style = feature.getStyle();
-        applyScaleToFeature(feature, zoom, style, styleType);
+        if (styleType) {
+            const style = feature.getStyle();
+            applyScaleToFeature(feature, zoom, style, styleType);
+        } else {
+            applyScaleToHeatmapLayer(feature, zoom);
+        }
     };
 
     // Attach zoom event listener

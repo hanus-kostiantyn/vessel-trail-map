@@ -59,6 +59,7 @@ const PositionMarkers = ({
                 scale: getScaleForZoom(map.getView().getZoom(), "marker"),
                 anchor: [0.5, 0.5],
             }),
+            zIndex: 10,
         });
 
         pointFeature.setStyle(iconStyle);

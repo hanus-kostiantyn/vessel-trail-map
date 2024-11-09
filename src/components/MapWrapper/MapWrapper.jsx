@@ -1,5 +1,4 @@
 import { useState } from "react";
-import VectorSource from "ol/source/Vector";
 import { vesselMovementData } from "../../data/vesselMovementData";
 import HoverHandler from "../HoverHandler/HoverHandler";
 import ToggleControls from "../ToggleControls/ToggleControls";
@@ -19,8 +18,8 @@ import "ol/ol.css";
 import styles from "./MapWrapper.styles";
 
 const MapWrapper = () => {
-    const [vectorSource, setVectorSource] = useState(new VectorSource());
-    const map = useInitializeMap(vectorSource);
+    const { map, vectorSource, heatmapSource, heatmapLayer } =
+        useInitializeMap();
 
     const [selectedVesselIndex, setSelectedVesselIndex] = useState(0);
     const [clickedVesselData, setClickedVesselData] = useState(null);
@@ -68,6 +67,8 @@ const MapWrapper = () => {
                             vessel={currentVessel}
                             vesselMovementData={simulatedTrail}
                             vectorSource={vectorSource}
+                            heatmapSource={heatmapSource}
+                            heatmapLayer={heatmapLayer}
                             map={map}
                         />
                         <HoverHandler map={map} vectorSource={vectorSource} />
